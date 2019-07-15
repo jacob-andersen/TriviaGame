@@ -27,15 +27,21 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "TRIVIA";
 
+    SingleFragment singleFragment;
+    MultipleFragment multipleFragment;
+
     TextView category;
     TextView difficulty;
     TextView question;
-    int number = 0, amount = 100;
+
+    int score =0, number = 0, amount = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        singleFragment = (SingleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_single);
         getQuestions(amount);
     }
 
@@ -68,10 +74,10 @@ public class MainActivity extends AppCompatActivity {
                             // Gson converts the json to the type we specified above
                             List<Question> questions = new Gson().fromJson(jsonArray.toString(), listType);
 
-                            // encode question and populate properties in Java Question object
+                            // decode question and populate properties in Java Question object
                             Question triviaquestion = initQuestion(questions.get(number));
 
-                            // Encode and place questions in view
+                            // place  decoded questions in view
                             displayQuestion(triviaquestion);
 
                         } catch (JSONException e) {
@@ -99,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // made for Single Question Fragment, adapt to Multiple Choice Fragment by adding Incorrect Answers
     public void displayQuestion(Question questions) {
         category = (TextView) findViewById(R.id.tv_category);
         difficulty = (TextView) findViewById(R.id.tv_difficulty);
@@ -107,11 +114,6 @@ public class MainActivity extends AppCompatActivity {
         category.setText(questions.getCategory());
         difficulty.setText(questions.getDifficulty());
         question.setText(questions.getQuestion());
-
-
-//        category.setText(decode(questions.get(number).getCategory()));
-//        difficulty.setText(decode(questions.get(number).getDifficulty()));
-//        question.setText(decode(questions.get(number).getQuestion()));
     }
 
     public Question initQuestion(Question q) {

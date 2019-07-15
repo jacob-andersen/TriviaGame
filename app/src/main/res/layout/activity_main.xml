@@ -77,17 +77,25 @@
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_difficulty" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_difficulty"
+        app:layout_constraintBottom_toTopOf="@id/fragment_single"/>
 
-    <FrameLayout
+    <fragment
         android:id="@+id/fragment_single"
+        android:name="com.example.triviagame.SingleFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_question"
-        />
+        app:layout_constraintTop_toBottomOf="@id/tv_question" />
+
+
+
+
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
