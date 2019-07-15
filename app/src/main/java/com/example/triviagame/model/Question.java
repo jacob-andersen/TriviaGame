@@ -1,20 +1,22 @@
 package com.example.triviagame.model;
 
+import java.util.Arrays;
+
 public class Question {
     private String category;
     private String type;
     private String difficulty;
     private String question;
-    private String correctAnswer;
-    private String[] incorrectAnswers;
+    private String correct_answer;
+    private String[] incorrect_answers;
 
-    public Question(String category, String type, String difficulty, String question, String correctAnswer, String[] incorrectAnswers) {
+    public Question(String category, String type, String difficulty, String question, String correct_answer, String[] incorrect_answers) {
         this.category = category;
         this.type = type;
         this.difficulty = difficulty;
         this.question = question;
-        this.correctAnswer = correctAnswer;
-        this.incorrectAnswers = incorrectAnswers;
+        this.correct_answer = correct_answer;
+        this.incorrect_answers = incorrect_answers;
     }
 
     public String getCategory() {
@@ -49,20 +51,32 @@ public class Question {
         this.question = question;
     }
 
-    public String getCorrectAnswer() {
-        return correctAnswer;
+    public String getCorrect_answer() {
+        return correct_answer;
     }
 
-    public void setCorrectAnswer(String correctAnswer) {
-        this.correctAnswer = correctAnswer;
+    public void setCorrect_answer(String correct_answer) {
+        this.correct_answer = correct_answer;
     }
 
-    public String[] getIncorrectAnswers() {
-        return incorrectAnswers;
+    public String[] getIncorrect_answers() {
+        return incorrect_answers;
     }
 
-    public void setIncorrectAnswers(String[] incorrectAnswers) {
-        this.incorrectAnswers = incorrectAnswers;
+    public void setIncorrect_answers(String[] incorrect_answers) {
+        this.incorrect_answers = incorrect_answers;
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "category='" + category + '\'' +
+                ", type='" + type + '\'' +
+                ", difficulty='" + difficulty + '\'' +
+                ", question='" + question + '\'' +
+                ", correct_answer='" + correct_answer + '\'' +
+                ", incorrect_answers=" + Arrays.toString(incorrect_answers) +
+                '}';
     }
 }
 

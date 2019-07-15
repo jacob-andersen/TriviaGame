@@ -1,8 +1,8 @@
 package com.example.triviagame;
 
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,26 +19,30 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "TRIVIA";
 
+    TextView category;
+    TextView difficulty;
+    TextView question;
+    int number = 0, amount = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        volleyRequest(5);
+        getQuestions(amount);
     }
 
-    public void volleyRequest(int count) {
+    public void getQuestions(int count) {
         String baseUrl = "https://opentdb.com/api.php";
         String query = "?amount=" + count;
-        String url = baseUrl + query;
+        String url = baseUrl + query + "&encode=base64";
 
         // 2: Create RequestQueue Object instance and init it with Volley.newRequestQueue
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
@@ -63,8 +67,13 @@ public class MainActivity extends AppCompatActivity {
                             }.getType();
                             // Gson converts the json to the type we specified above
                             List<Question> questions = new Gson().fromJson(jsonArray.toString(), listType);
-                            questions.get(0).getDifficulty();
-                            Log.d(TAG, "onResponse: " + questions.toString());
+
+                            // encode question and populate properties in Java Question object
+                            Question triviaquestion = initQuestion(questions.get(number));
+
+                            // Encode and place questions in view
+                            displayQuestion(triviaquestion);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -81,42 +90,42 @@ public class MainActivity extends AppCompatActivity {
 
         //Step 4 Pass the request object from Step 3 into Requestqueue object from step 2
         requestQueue.add(request);
+    }
 
+    public String decode(String question) {
+        byte[] decodedBytes = Base64.getDecoder().decode(question);
+        String decodedString = new String(decodedBytes);
+        return decodedString;
 
     }
 
+    public void displayQuestion(Question questions) {
+        category = (TextView) findViewById(R.id.tv_category);
+        difficulty = (TextView) findViewById(R.id.tv_difficulty);
+        question = (TextView) findViewById(R.id.tv_question);
 
-//                                    List<String> urls = new ArrayList<>();
-//                            for(int i=0;i<response.length();i++) {
-//                                urls.add(response.get(i).toString());
-//                                Log.d(TAG, (i+1) +" "+response.get(i).toString());
-//                            }
-//                            System.out.println(urls);
-////                            loadRecyclerView(urls);
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                },
-//                new Response.ErrorListener() { // Param 3: Error Listener
-//                    @Override
-//                    public void onErrorResponse(VolleyError error) {
-//                        Log.d(TAG,"onErrorResponse: "+ error.getLocalizedMessage());
-//                    }
-//                }
-//        );
-//
-//        // 4: Pass the request object from Step 3 into the requestQueue object from Step 2
-//        requestQueue.add(request);
-//
-//    }
+        category.setText(questions.getCategory());
+        difficulty.setText(questions.getDifficulty());
+        question.setText(questions.getQuestion());
 
-    private String decodeBase64(String coded) {
-        byte[] valueDecoded = new byte[0];
-        try {
-            valueDecoded = Base64.decode(coded.getBytes("UTF-8"), Base64.DEFAULT);
-        } catch (UnsupportedEncodingException e) {
+
+//        category.setText(decode(questions.get(number).getCategory()));
+//        difficulty.setText(decode(questions.get(number).getDifficulty()));
+//        question.setText(decode(questions.get(number).getQuestion()));
+    }
+
+    public Question initQuestion(Question q) {
+        q.setCategory(decode(q.getCategory()));
+        q.setDifficulty(decode(q.getDifficulty()));
+        q.setQuestion(decode(q.getQuestion()));
+        q.setCorrect_answer(decode(q.getCorrect_answer()));
+        q.setType(decode(q.getType()));
+        String[] wrong_answers = q.getIncorrect_answers();
+        for (int i = 0; i < wrong_answers.length; i++) {
+            wrong_answers[i] = decode(wrong_answers[i]);
         }
-        return new String(valueDecoded);
+        q.setIncorrect_answers(wrong_answers);
+        return q;
     }
 }
+
