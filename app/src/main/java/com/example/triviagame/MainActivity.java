@@ -5,6 +5,8 @@ import android.util.Log;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -34,14 +36,23 @@ public class MainActivity extends AppCompatActivity {
     TextView difficulty;
     TextView question;
 
-    int score =0, number = 0, amount = 100;
+    int score = 0, number = 0, amount = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        singleFragment = (SingleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_single);
+//        singleFragment = (SingleFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_single);
+
+        multipleFragment = new MultipleFragment();
+        singleFragment = new SingleFragment();
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, multipleFragment )
+                .commit();
+
         getQuestions(amount);
     }
 
@@ -77,10 +88,21 @@ public class MainActivity extends AppCompatActivity {
                             // decode question and populate properties in Java Question object
                             Question triviaquestion = initQuestion(questions.get(number));
 
+
+//                            if (triviaquestion.getType().equals("boolean")) {
+//                                Log.d(TAG,"SINGLE CHOICE QUESTION!!!");
+//                            }
+
                             // place  decoded questions in view
                             displayQuestion(triviaquestion);
 
-                        } catch (JSONException e) {
+                            // TODO Decide whether to show singe or multiple choice screen
+                            // TODO Check user reply and evaluate answer
+                            // TODO Give feedback and update score
+
+                            initAnswerFragment(triviaquestion);
+
+                            } catch (JSONException e) {
                             e.printStackTrace();
                         }
 
@@ -129,5 +151,20 @@ public class MainActivity extends AppCompatActivity {
         q.setIncorrect_answers(wrong_answers);
         return q;
     }
-}
+
+    public void initAnswerFragment(Question question)
+    {
+        if(question.getType().equals("boolean")) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, singleFragment)
+                    .commit();
+        } else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment_container, multipleFragment )
+                    .commit();
+        }
+        }
+    }
 
